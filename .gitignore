@@ -6,3 +6,4 @@ jspm_packages
 .serverless
 .env
 dev.env.yml
+package-lock.json
