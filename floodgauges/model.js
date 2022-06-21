@@ -27,11 +27,12 @@ const floodgauges = (config, db, logger) => ({
       // Setup values
       let timeWindow =
         Date.now() / 1000 - config.API_FLOODGAUGE_REPORTS_TIME_WINDOW;
+      let apiLimit = config.API_FLOODGAUGE_REPORTS_LIMIT || null;
 
       // Execute
       db.query(query, {
         type: QueryTypes.SELECT,
-        bind: [timeWindow, admin, config.API_FLOODGAUGE_REPORTS_LIMIT],
+        bind: [timeWindow, admin, apiLimit],
       })
         .then((data) => resolve(data))
         /* istanbul ignore next */
