@@ -21,7 +21,7 @@ const floodgauges = (config, db, logger) => ({
           warningnameid) ORDER BY measuredatetime ASC)) as observations
       FROM ${config.TABLE_FLOODGAUGE_REPORTS}
       WHERE measuredatetime >= to_timestamp($1)
-      AND ($2 IS NULL OR tags->>'instance_region_code'=$2)
+      AND ($2::text IS NULL OR tags->>'instance_region_code'=$2)
       GROUP BY gaugeid, the_geom, gaugenameid LIMIT $3`;
 
       // Setup values
