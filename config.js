@@ -38,6 +38,7 @@ const config = {
     process.env.PARTNER_IMAGES_BUCKET || "petabencana-partner-images",
   IMAGES_HOST: process.env.IMAGES_HOST || "images.petabencana.id",
   API_REPORTS_LIMIT: process.env.API_REPORTS_LIMIT,
+  API_FLOODGAUGE_REPORTS_TIME_WINDOW: process.env.API_FLOODGAUGE_REPORTS_TIME_WINDOW || 43200,
   API_FLOODGAUGE_REPORTS_LIMIT: process.env.API_FLOODGAUGE_REPORTS_LIMIT,
   PGHOST: process.env.PGHOST || "127.0.0.1",
   PGDATABASE: process.env.PGDATABASE || "cognicity",
@@ -52,19 +53,15 @@ const config = {
   TABLE_GRASP_CARDS: process.env.TABLE_GRASP_CARDS || "grasp.cards",
   TABLE_GRASP_LOG: process.env.TABLE_GRASP_LOG || "grasp.log",
   TABLE_GRASP_REPORTS: process.env.TABLE_GRASP_REPORTS || "grasp.reports",
-  TABLE_INSTANCE_REGIONS:
-    process.env.TABLE_INSTANCE_REGIONS || "cognicity.instance_regions",
+  TABLE_INSTANCE_REGIONS:  process.env.TABLE_INSTANCE_REGIONS || "cognicity.instance_regions",
   TABLE_LOCAL_AREAS: process.env.TABLE_LOCAL_AREAS || "cognicity.local_areas",
-  TABLE_LOCAL_AREAS_RW:
-    process.env.TABLE_LOCAL_AREAS || "cognicity.local_areas_RW",
+  TABLE_LOCAL_AREAS_RW: process.env.TABLE_LOCAL_AREAS || "cognicity.local_areas_RW",
   TABLE_REM_STATUS: process.env.TABLE_REM_STATUS || "cognicity.rem_status",
-  TABLE_REM_STATUS_LOG:
-    process.env.TABLE_REM_STATUS_LOG || "cognicity.rem_status_log",
+  TABLE_REM_STATUS_LOG: process.env.TABLE_REM_STATUS_LOG || "cognicity.rem_status_log",
   TABLE_REPORTS: process.env.TABLE_REPORTS || "cognicity.all_reports",
-  TABLE_REPORTS_POINTS_LOG:
-    process.env.TABLE_REPORTS_LOG || "cognicity.reports_points_log",
-  TABLE_COGNICITY_PARTNERS:
-    process.env.TABLE_COGNICITY_PARTNERS || "cognicity.partners",
+  TABLE_REPORTS_POINTS_LOG:  process.env.TABLE_REPORTS_LOG || "cognicity.reports_points_log",
+  TABLE_COGNICITY_PARTNERS: process.env.TABLE_COGNICITY_PARTNERS || "cognicity.partners",
+  TABLE_FLOODGAUGE_REPORTS: process.env.TABLE_FLOODGAUGE_REPORTS || 'floodgauge.reports',
 };
 
 module.exports = config;
