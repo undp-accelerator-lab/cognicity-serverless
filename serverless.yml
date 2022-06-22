@@ -11,7 +11,7 @@ plugins:
 custom:
   customDomain:
     basePath: "${param:service}"
-    domainName: "dev-api.petabencana.id"
+    domainName: "${env:DOMAIN_NAME}"
     stage: "${opt:stage}"
     certificateArn: "arn:aws:acm:us-east-1:803326344021:certificate/79c384d2-6262-42bc-b4f3-c6b1fd0ef8cb"
     createRoute53Record: true
