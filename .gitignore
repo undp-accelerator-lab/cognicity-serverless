@@ -5,5 +5,5 @@ jspm_packages
 # Serverless directories
 .serverless
 .env
-dev.env.yml
+*.env.yml
 package-lock.json
