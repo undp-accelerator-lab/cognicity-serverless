@@ -8,12 +8,11 @@ package:
     - utils/**
     - feeds/**
 
-service: feeds
 
 functions:
   feeds:
     handler: feeds/feeds-main.main
-    name: ${self:service}
+    name: ${self:service}-${opt:stage}
     # Comment out the below line incase of running it in local
     environment: ${file(./${opt:stage}.env.yml):env}
     vpc:

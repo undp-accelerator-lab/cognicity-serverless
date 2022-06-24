@@ -5,12 +5,11 @@ package:
     - utils/**
     - reports/**
 
-service: reports
 
 functions:
   reports:
     handler: reports/reports-main.main
-    name: ${self:service}
+    name: ${self:service}-${opt:stage}
     environment: ${file(./${opt:stage}.env.yml):env}
     vpc:
       securityGroupIds:
