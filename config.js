@@ -34,6 +34,7 @@ const config = {
     process.env.CACHE_DURATION_FLOODS_STATES || "1 hour",
   CACHE_DURATION_INFRASTRUCTURE:
     process.env.CACHE_DURATION_INFRASTRUCTURE || "1 hour",
+  IMAGES_BUCKET: process.env.IMAGES_BUCKET || 'petabencana-image-uploads',
   PARTNER_IMAGES_BUCKET:
     process.env.PARTNER_IMAGES_BUCKET || "petabencana-partner-images",
   IMAGES_HOST: process.env.IMAGES_HOST || "images.petabencana.id",
