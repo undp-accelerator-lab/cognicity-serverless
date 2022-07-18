@@ -16,7 +16,6 @@ let s3 = new AWS.S3({
   signatureVersion: config.AWS_S3_SIGNATURE_VERSION,
   region: config.AWS_REGION,
 });
-
 /**
  * CogniCity Server /cards endpoint
  * @param {Object} config Server configuration
@@ -36,7 +35,6 @@ app.use((req, res, next) => {
  * create cards
  */
 app.post("cards", (req, res) => {
-  console.log("🚀 ~ file: cards-main.js ~ line 31 ~ app.post ~ req", req);
   return cards(config, db)
     .create(req.body)
     .then((data) =>
@@ -103,7 +101,7 @@ app.put("cards/:cardId", (req, res, next) => {
             req.body.disaster_type == "earthquake"
           ) {
             // If card already has received status and disaster is earthquake add new card for other subtype
-            cards(config, db)
+            return cards(config, db)
               .create({
                 username: card.username,
                 network: card.network,
@@ -155,66 +153,66 @@ app.put("cards/:cardId", (req, res, next) => {
   }
 });
 
+function getSignedUrlPromise (req) {
+  return new Promise((resolve, reject) => {
+    let s3params = {
+      Bucket: config.IMAGES_BUCKET,
+      Key:
+        "originals/" +
+        req.params.cardId +
+        "." +
+        req.headers["content-type"].split("/")[1],
+      ContentType: req.query.file_type,
+    }
+    // Call AWS S3 library
+    s3.getSignedUrl("putObject", s3params, (err, data) => {
+      if (err) {
+        reject(err)
+      } else {
+        let returnData;
+          returnData = {
+            signedRequest: data,
+            url:
+              "https://s3." +
+              config.AWS_REGION +
+              ".amazonaws.com/" +
+              config.IMAGES_BUCKET +
+              "/" +
+              s3params.Key,
+          };
+        resolve(returnData);
+      }    
+    })
+  })
+}
+
 // Gives an s3 signed url for the frontend to upload an image to
-app.get("cards/:cardId/images", (req, res) => {
+app.get("cards/:cardId/images", (req, res) => 
   // first, check card exists
-  return cards(config, db)
+   cards(config, db)
     .byCardId(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        // Card was not found, return error
+    .then((card) => {     
+      if(!card){
+      // Card was not found, return error
         return res.status(404).json({
           statusCode: 404,
           cardId: req.params.cardId,
           message: `No card exists with id '${req.params.cardId}'`,
-        });
-      } else {
-        // Provide client with signed url for this card
-        let s3params = {
-          Bucket: config.IMAGES_BUCKET,
-          Key:
-            "originals/" +
-            req.params.cardId +
-            "." +
-            req.headers["content-type"].split("/")[1],
-          ContentType: req.query.file_type,
-        };
-        // Call AWS S3 library
-        s3.getSignedUrl("putObject", s3params, (err, data) => {
-          let returnData;
-          if (err) {
-            /* istanbul ignore next */
-            // logger.error("could not get signed url from S3");
-            /* istanbul ignore next */
-            // logger.error(err);
-            res.status(400).json({ message: "Error while saving file to s3" });
-            returnData = { statusCode: 500, error: err };
-          } else {
-            returnData = {
-              signedRequest: data,
-              url:
-                "https://s3." +
-                config.AWS_REGION +
-                ".amazonaws.com/" +
-                config.IMAGES_BUCKET +
-                "/" +
-                s3params.Key,
-            };
-            // Return signed URL
-            // clearCache();
-            // logger.debug("s3 signed request: " + returnData.signedRequest);
-            res.send(JSON.stringify(returnData));
-          }
-        });
+        })
       }
-    });
-});
+      return getSignedUrlPromise(req).then((data) => 
+       res.status(200).json(data)
+      ).catch((err) => 
+         res.status(400).json({statusCode: 400, message: 'Error while uploading to s3'})
+      )
+    })
+);
 
 // Update a card report with new details including the image URL
 app.patch("cards/:cardId", (req, res) => {
-  try {
     // First get the card we wish to update
-    return cards(config, db, logger)
+    try{
+      return cards(config, db)
       .byCardId(req.params.cardId)
       .then((card) => {
         // If the card does not exist then return an error message
@@ -223,15 +221,15 @@ app.patch("cards/:cardId", (req, res) => {
             cardId: req.params.cardId,
             message: `No card exists with id '${req.params.cardId}'`,
           });
-        } else {
+        } 
           // We have a card
           // Verify that we can add an image to card report
           if (card.received === false || card.report.image_url !== null) {
             return res.status(400).json({
               error: "Card report not received or image exists already",
             });
-          } else {
-            // Try and submit the report and update the card
+          } 
+          // Try and submit the report and update the card
             req.body.image_url =
               "https://" +
               config.IMAGES_HOST +
@@ -248,6 +246,7 @@ app.patch("cards/:cardId", (req, res) => {
                 });
               })
               .catch((err) => {
+                console.log("🚀 ~ file: cards-main.js ~ line 255 ~ .then ~ err", err)
                 return res.status(400).json({
                   error: "Error while processing request",
                 });
@@ -256,16 +255,12 @@ app.patch("cards/:cardId", (req, res) => {
                 /* istanbul ignore next */
                 // next(err);
               });
-          }
-        }
-      });
-  } catch (err) {
-    /* istanbul ignore next */
-    // logger.error(err);
-    /* istanbul ignore next */
-    // next(err);
-  }
-});
+      })
+    }catch(err){
+      console.log("🚀 ~ file: cards-main.js ~ line 269 ~ app.patch ~ err", err)
+    }
+    
+})
 
 function createReport(config, db, card, req, res) {
   {
