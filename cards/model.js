@@ -221,15 +221,17 @@ const cards = (config, db) => ({
       let queries = [
         {
           query: `UPDATE ${config.TABLE_GRASP_REPORTS} SET
-        image_url = COALESCE(?, image_url)
+        image_url = COALESCE(?, null)
         WHERE card_id = ?`,
-          values: [card.card_id, body.image_url],
+        type: QueryTypes.UPDATE,
+        replacements: [ body.image_url , card.card_id],
         },
         {
           query: `INSERT INTO ${config.TABLE_GRASP_LOG}
             (card_id, event_type)
             VALUES (?, ?)`,
-          values: [card.card_id, "REPORT UPDATE (PATCH)"],
+            type: QueryTypes.INSERT,
+            replacements: [card.card_id, "REPORT UPDATE (PATCH)"],
         },
       ];
 
@@ -258,74 +260,6 @@ const cards = (config, db) => ({
           reject(err);
         });
     }),
-
-  //   fetchAllPartners: () =>
-  //     new Promise((resolve, reject) => {
-  //       try {
-  //         const users = db.query(
-  //           `SELECT * FROM ${config.TABLE_COGNICITY_PARTNERS}`,
-  //           {
-  //             type: QueryTypes.SELECT,
-  //           }
-  //         );
-  //         resolve(users);
-  //       } catch (err) {
-  //         console.log("Error here", err);
-  //         reject(err);
-  //       }
-  //     }),
-
-  //   getByCode: (value) =>
-  //     new Promise((resolve, reject) => {
-  //       // Setup query
-  //       let partner_code = value.partner_code;
-
-  //       const users = `SELECT * FROM ${config.TABLE_COGNICITY_PARTNERS}
-  //          WHERE partner_code = ?`;
-
-  //       // Execute
-  //       db.query(users, {
-  //         type: QueryTypes.UPDATE,
-  //         replacements: [partner_code],
-  //       })
-  //         .then((data) => {
-  //           resolve(...data);
-  //         })
-  //         /* istanbul ignore next */
-  //         .catch((err) => {
-  //           /* istanbul ignore next */
-  //           reject(err);
-  //         });
-  //     }),
-
-  //   updateRecord: (data, param) =>
-  //     new Promise((resolve, reject) => {
-  //       // Setup query
-  //       let partner_name = data.partner_name ? data.partner_name : null;
-  //       let partner_code = data.partner_code ? data.partner_code : null;
-  //       let partner_status =
-  //         data.partner_status !== undefined ? data.partner_status : null;
-  //       let partner_icon = data.partner_icon ? data.partner_icon : null;
-
-  //       const query = `UPDATE ${config.TABLE_COGNICITY_PARTNERS}
-  //        SET partner_name = COALESCE(?, partner_name)  , partner_code = COALESCE(?, partner_code) , partner_status = COALESCE(?, partner_status) , partner_icon = COALESCE(?, partner_icon)  WHERE id = ${param.id}`;
-  //       // Execute
-  //       db.query(query, {
-  //         type: QueryTypes.UPDATE,
-  //         replacements: [
-  //           partner_name,
-  //           partner_code,
-  //           partner_status,
-  //           partner_icon,
-  //         ],
-  //       })
-  //         .then(() => {
-  //           resolve({ update: true });
-  //         })
-  //         .catch((err) => {
-  //           reject(err);
-  //         });
-  //     }),
 });
 
 module.exports = cards;
