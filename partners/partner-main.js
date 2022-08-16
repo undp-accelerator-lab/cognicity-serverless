@@ -95,6 +95,12 @@ const getAndDeleteObject = (requestBody, params) => {
     });
 };
 
+app.use((req, res, next) => {
+  // do something
+  res.cors();
+  next();
+});
+
 /**
  * create partners
  */
