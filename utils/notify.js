@@ -1,5 +1,4 @@
-import axios from "axios";
-
+const axios = require('axios')
 /**
  * Notify - send notification of report received to notify endpoint
  * @class Notify
