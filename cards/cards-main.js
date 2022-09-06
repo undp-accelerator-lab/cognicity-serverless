@@ -9,6 +9,7 @@ const db = require("../utils/db");
 const app = require("lambda-api")();
 const AWS = require("aws-sdk");
 const { handleResponse } = require("../utils/utils");
+const Notify = require('../utils/notify')
 
 let s3 = new AWS.S3({
   accessKeyId: config.AWS_S3_ACCESS_KEY_ID,
@@ -24,6 +25,8 @@ let s3 = new AWS.S3({
  **/
 
 // For enabling cors headers
+
+let notify = new Notify(config);
 
 app.use((req, res, next) => {
   // do something
@@ -115,7 +118,7 @@ app.put("cards/:cardId", (req, res, next) => {
                       //   logger,
                       { card_id: data.card_id },
                       req,
-                      //   notify,
+                      notify,
                       res
                       //   next
                     )
@@ -140,7 +143,7 @@ app.put("cards/:cardId", (req, res, next) => {
               ' card '${req.params.cardId}'`,
             });
           }
-        } else return createReport(config, db, card, req, res);
+        } else return createReport(config, db, card, req, notify , res);
       });
   } catch (err) {
     return res.status(400).json({
@@ -262,25 +265,25 @@ app.patch("cards/:cardId", (req, res) => {
     
 })
 
-function createReport(config, db, card, req, res) {
+function createReport(config, db, card, req, notify , res) {
   {
     return cards(config, db)
       .submitReport(card, req.body)
       .then((data) => {
         // logger.debug(data);
-        // data.card = card;
+        data.card = card;
         // Submit a request to notify the user report received
-        // notify
-        //   .send(data)
-        //   .then((_data) => {
-        //     logger.info("Notification request succesfully submitted");
-        //   })
-        //   .catch((err) => {
-        //     logger.error(
-        //       `Error with notification request.
-        //                 Response was ` + JSON.stringify(err)
-        //     );
-        //   });
+        notify
+          .send(data)
+          .then((_data) => {
+            console.log("Notification request succesfully submitted");
+          })
+          .catch((err) => {
+            console.error(
+              `Error with notification request.
+                        Response was ` + JSON.stringify(err)
+            );
+          });
         // clearCache();
         // Report success
         return res.status(200).json({

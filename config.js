@@ -41,6 +41,8 @@ const config = {
   API_REPORTS_LIMIT: process.env.API_REPORTS_LIMIT,
   API_FLOODGAUGE_REPORTS_TIME_WINDOW: process.env.API_FLOODGAUGE_REPORTS_TIME_WINDOW || 43200,
   API_FLOODGAUGE_REPORTS_LIMIT: process.env.API_FLOODGAUGE_REPORTS_LIMIT,
+  NOTIFY_API_KEY: process.env.NOTIFY_API_KEY || '',
+  NOTIFY_ENDPOINT: process.env.NOTIFY_ENDPOINT || 'api.petabencana.id/notify',
   PGHOST: process.env.PGHOST || "127.0.0.1",
   PGDATABASE: process.env.PGDATABASE || "cognicity",
   PGPASSWORD: process.env.PGPASSWORD || "postgres",
