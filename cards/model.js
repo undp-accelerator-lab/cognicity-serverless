@@ -206,7 +206,9 @@ const cards = (config, db) => ({
             "🚀 ~ file: model.js ~ line 203 ~ db.transaction ~ data",
             data
           );
-          resolve(data);
+          const notifyData = data ? JSON.parse(data[3].notify) : {};
+          notifyData.tweetID = body.tweetID || "";
+          resolve(notifyData);
         })
         .catch((err) => {
           console.log("🚀 ~ file: model.js ~ line 210 ~ newPromise ~ err", err);

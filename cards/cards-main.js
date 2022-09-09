@@ -3,13 +3,8 @@
  * CogniCity Server /cards endpoint
  * @module cards/cards-main
  **/
-const cards = require("./model");
-const config = require("../config");
-const db = require("../utils/db");
-const app = require("lambda-api")();
-const AWS = require("aws-sdk");
-const { handleResponse } = require("../utils/utils");
-const Notify = require('../utils/notify')
+AWS.config.region = config.AWS_REGION
+let lambda = new AWS.Lambda()
 
 let s3 = new AWS.S3({
   accessKeyId: config.AWS_S3_ACCESS_KEY_ID,
@@ -265,31 +260,27 @@ app.patch("cards/:cardId", (req, res) => {
     
 })
 
-function createReport(config, db, card, req, notify , res) {
+async function createReport(config, db, card, req, res) {
   {
     return cards(config, db)
       .submitReport(card, req.body)
-      .then((data) => {
-        // logger.debug(data);
-        data.card = card;
-        // Submit a request to notify the user report received
-        notify
-          .send(data)
-          .then((_data) => {
-            console.log("Notification request succesfully submitted");
+			.then(async (data) => {
+				data.card = card
+
+				// Invokes a notifier lambda to notify the user report received
+				return invokeNotify(config, data)
+					.then(() => {
+						return res.status(200).json({
+							cardId: req.params.cardId,
+							created: true,
           })
-          .catch((err) => {
-            console.error(
-              `Error with notification request.
-                        Response was ` + JSON.stringify(err)
-            );
-          });
-        // clearCache();
-        // Report success
+					})
+					.catch(() => {
         return res.status(200).json({
           cardId: req.params.cardId,
           created: true,
-        });
+						})
+					})
       })
       .catch((err) => {
         console.log(
@@ -298,13 +289,39 @@ function createReport(config, db, card, req, notify , res) {
         );
         return res.status(400).json({
           message: `Error while creating report`,
-        });
+				})
         // /* istanbul ignore next */
         // logger.error(err);
         // /* istanbul ignore next */
         // next(err);
-      });
+			})
+	}
+}
+
+function invokeNotify(config, body) {
+	return new Promise((resolve, reject) => {
+		body.card.userId = body.card.username
+		delete body.card.username
+		const endpoint = config.NOTIFY_ENDPOINT + body.card.network + '/send/'
+		const eventPayload = {
+			body: body,
+			endpoint: endpoint,
+		}
+		const params = {
+			FunctionName: 'thank-you-notifier', // the lambda function we are going to invoke
+			InvocationType: 'Event',
+			Payload: JSON.stringify(eventPayload),
+		}
+		lambda.invoke(params, function (err, data) {
+			if (err) {
+				reject()
+				console.log('Error while invoking lambda', err)
+			} else {
+				resolve()
+				console.log('Lambda invoked')
   }
+		})
+	})
 }
 
 //----------------------------------------------------------------------------//
@@ -315,7 +332,7 @@ module.exports.main = async (event, context) => {
   // !!!IMPORTANT: Set this flag to false, otherwise the lambda function
   // won't quit until all DB connections are closed, which is not good
   // if you want to freeze and reuse these connections
-  context.callbackWaitsForEmptyEventLoop = false;
+	context.callbackWaitsForEmptyEventLoop = true
 
   // Run the request
   return await app.run(event, context);
