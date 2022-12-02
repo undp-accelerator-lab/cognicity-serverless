@@ -131,7 +131,7 @@ const cards = (config, db) => ({
 
   // Add entry to the reports table and then update the card record accordingly
   submitReport: (card, body) =>
-    new Promise((resolve, reject) => {
+    new Promise(async(resolve, reject) => {
       let partner_code = !!body.partnerCode ? body.partnerCode : null;
 
       // Log queries to debugger
@@ -172,19 +172,19 @@ const cards = (config, db) => ({
           type: QueryTypes.INSERT,
           replacements: [card.card_id, "REPORT SUBMITTED"],
         },
-        {
-          query: `SELECT * FROM grasp.push_to_all_reports(?) as notify`,
-          type: QueryTypes.SELECT,
-          replacements: [card.card_id],
-        },
+        // {
+        //   query: `SELECT * FROM grasp.push_to_all_reports(?) as notify`,
+        //   type: QueryTypes.SELECT,
+        //   replacements: [card.card_id],
+        // },
       ];
 
       // Log queries to debugger
       //   for (let query of queries) logger.debug(query.query, query.values);
 
       // Execute in a transaction as both INSERT and UPDATE must happen together
+      try {
       db.transaction(async (transaction) => {
-        try {
           for (let query of queries) {
             await db.query(query.query, {
               type: query.type,
@@ -192,33 +192,43 @@ const cards = (config, db) => ({
               transaction,
             });
           }
-        } catch (error) {
-          console.log(
-            "🚀 ~ file: model.js ~ line 197 ~ db.transaction ~ error",
-            error
-          );
-          reject(error);
-          transaction.rollback();
-        }
-      })
-        .then((data) => {
-          console.log(
-            "🚀 ~ file: model.js ~ line 203 ~ db.transaction ~ data",
-            data
-          );
-          const notifyData = data ? JSON.parse(data[3].notify) : {};
-          notifyData.tweetID = body.tweetID || "";
-          resolve(notifyData);
-        })
-        .catch((err) => {
-          console.log("🚀 ~ file: model.js ~ line 210 ~ newPromise ~ err", err);
+        }).then((data) => {
+          return db.query(`SELECT * FROM grasp.push_to_all_reports(?) as notify`, {
+            type: QueryTypes.SELECT,
+            replacements: [card.card_id],
+          })
+            .then((notify) => {
+              const notifyData = JSON.parse(notify[0].notify) || {};
+              notifyData.tweetID = body.tweetID || "";
+              resolve(notifyData);
+            })
+            /* istanbul ignore next */
+            .catch((err) => {
+              console.log("🚀 ~ file: model.js ~ line 81 ~ newPromise ~ err", err);
+              /* istanbul ignore next */
+              reject(err);
+            });
+        
+        }).catch((err) => {
+          console.log("🚀 ~ file: model.js ~ line 213 ~ returndb.transaction ~ err", err)
           reject(err);
-        });
+          // transaction.rollback();
+        })
+   
+      } 
+      catch (error) {
+        console.log(
+          "🚀 ~ file: model.js ~ line 197 ~ db.transaction ~ error",
+          error
+        );
+    
+      }
     }),
 
   // Update the reports table with new report details
   updateReport: (card, body) =>
     new Promise((resolve, reject) => {
+    console.log("Body to update" , body)
       // Setup our queries
       let queries = [
         {

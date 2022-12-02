@@ -20,7 +20,7 @@ const config = {
   AWS_S3_ACCESS_KEY_ID: process.env.AWS_S3_ACCESS_KEY_ID || "",
   AWS_S3_SECRET_ACCESS_KEY: process.env.AWS_S3_SECRET_ACCESS_KEY || "",
   AWS_S3_SIGNATURE_VERSION: process.env.AWS_SIGNATURE_VERSION || "v4",
-  FLOOD_REPORTS_TIME_WINDOW: process.env.FLOOD_REPORTS_TIME_WINDOW || 86400, // 3 hr
+  FLOOD_REPORTS_TIME_WINDOW: process.env.FLOOD_REPORTS_TIME_WINDOW || 10800, // 3 hr
   EQ_REPORTS_TIME_WINDOW: process.env.EQ_REPORTS_TIME_WINDOW || 43200, // 12 hr
   WIND_REPORTS_TIME_WINDOW: process.env.WIND_REPORTS_TIME_WINDOW || 7200, // 2 hr
   HAZE_REPORTS_TIME_WINDOW: process.env.HAZE_REPORTS_TIME_WINDOW || 21600, // 6 hr
@@ -43,7 +43,7 @@ const config = {
   API_FLOODGAUGE_REPORTS_LIMIT: process.env.API_FLOODGAUGE_REPORTS_LIMIT,
   NOTIFY_API_KEY: process.env.NOTIFY_API_KEY || '',
   NOTIFY_ENDPOINT: process.env.NOTIFY_ENDPOINT || 'api.petabencana.id/notify',
-  PGHOST: process.env.PGHOST || "127.0.0.1",
+  PGHOST: process.env.PGHOST || "127.0.0.1",  
   PGDATABASE: process.env.PGDATABASE || "cognicity",
   PGPASSWORD: process.env.PGPASSWORD || "postgres",
   PGPORT: process.env.PGPORT || 5432,
@@ -65,6 +65,9 @@ const config = {
   TABLE_REPORTS_POINTS_LOG:  process.env.TABLE_REPORTS_LOG || "cognicity.reports_points_log",
   TABLE_COGNICITY_PARTNERS: process.env.TABLE_COGNICITY_PARTNERS || "cognicity.partners",
   TABLE_FLOODGAUGE_REPORTS: process.env.TABLE_FLOODGAUGE_REPORTS || 'floodgauge.reports',
+  TABLE_EARTHQUAKE_REPORTS: process.env.TABLE_EARTHQUAKE_REPORTS || 'public.earthquakes_reports',
+  TABLE_VOLCANO_LIST_REPORTS : process.env.TABLE_VOLCANO_LIST_REPORTS || 'volcano.list_volcano',
+  TABLE_VOLCANO_LAST_ERUPTION_REPORTS : process.env.TABLE_VOLCANO_LAST_ERUPTION_REPORTS || 'volcano.lastest_eruption'
 };
 
 module.exports = config;

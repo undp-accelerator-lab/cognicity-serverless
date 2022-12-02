@@ -60,18 +60,10 @@ const handleGeoResponse = (data, req, res, next) => {
     ? res.status(404).json({ statusCode: 404, found: false, result: null })
     : formatGeo(data, req.query.geoformat)
         .then((formatted) => {
-          console.log(
-            "🚀 ~ file: utils.js ~ line 63 ~ handleGeoResponse ~ formatted",
-            formatted
-          );
           return res.status(200).json({ statusCode: 200, result: formatted });
         })
         /* istanbul ignore next */
         .catch((err) => {
-          console.log(
-            "🚀 ~ file: utils.js ~ line 71 ~ handleGeoResponse ~ err",
-            err
-          );
           return res.status(400).json({ message: "Could not format request" });
           /* istanbul ignore next */
           // next(err);
