@@ -7,6 +7,7 @@
 require("dotenv").config({ silent: true });
 
 const config = {
+  DEPLOYMENT : process.env.DEPLOYMENT || 'id',
   LOG_LEVEL: process.env.LOG_LEVEL || "error",
   GEO_FORMAT_DEFAULT: process.env.GEO_FORMAT_DEFAULT || "topojson",
   GEO_FORMATS: (process.env.GEO_FORMATS || "geojson,topojson").split(","),
