@@ -29,7 +29,7 @@ const volcanos = (config, db, logger) => ({
 
     lastEruption: () =>
     new Promise((resolve, reject) => {
-      let query = `SELECT volcano_name , ST_AsBinary(the_geom) , activity_level , visual , photo_ , share_url  from ${config.TABLE_VOLCANO_LAST_ERUPTION_REPORTS};`
+      let query = `SELECT local_date , volcano_name , ST_AsBinary(the_geom) , activity_level , visual , photo_ , share_url  from ${config.TABLE_VOLCANO_LAST_ERUPTION_REPORTS};`
 
       // Execute
       db.query(query, {
