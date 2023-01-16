@@ -251,26 +251,29 @@ const cards = (config, db) => ({
       //   for (let query of queries) logger.debug(query.query, query.values);
 
       // Execute in a transaction as both INSERT and UPDATE must happen together
-      db.transaction(async (transaction) => {
-        try {
-          for (let query of queries) {
-            await db.query(query.query, {
-              type: query.type,
-              replacements: query.replacements,
-              transaction,
-            });
-          }
-        } catch (error) {
-          reject(error);
-          transaction.rollback();
-        }
-      })
+      try {
+        db.transaction(async (transaction) => {
+            for (let query of queries) {
+              await db.query(query.query, {
+                type: query.type,
+                replacements: query.replacements,
+                transaction,
+              });
+            }
+          })
         .then((data) => {
           resolve(data);
         })
         .catch((err) => {
+          console.log("🚀 ~ file: model.js:271 ~ newPromise ~ err", err)
           reject(err);
         });
+      }
+        catch (error) {
+          console.log("🚀 ~ file: model.js:263 ~ db.transaction ~ error", error)
+          reject(error);
+          // transaction.rollback();
+        }
     }),
 });
 

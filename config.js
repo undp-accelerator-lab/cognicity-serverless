@@ -68,7 +68,9 @@ const config = {
   TABLE_FLOODGAUGE_REPORTS: process.env.TABLE_FLOODGAUGE_REPORTS || 'floodgauge.reports',
   TABLE_EARTHQUAKE_REPORTS: process.env.TABLE_EARTHQUAKE_REPORTS || 'public.earthquakes_reports',
   TABLE_VOLCANO_LIST_REPORTS : process.env.TABLE_VOLCANO_LIST_REPORTS || 'volcano.list_volcano',
-  TABLE_VOLCANO_LAST_ERUPTION_REPORTS : process.env.TABLE_VOLCANO_LAST_ERUPTION_REPORTS || 'volcano.lastest_eruption'
+  TABLE_VOLCANO_LAST_ERUPTION_REPORTS : process.env.TABLE_VOLCANO_LAST_ERUPTION_REPORTS || 'volcano.lastest_eruption',
+  TABLE_SUBSCRIPTIONS : process.env.TABLE_SUBSCRIPTIONS || 'subscriptions.subscriptions_table',
+  TABLE_REGIONS : process.env.TABLE_REGIONS || 'cognicity.local_cities'
 };
 
 module.exports = config;

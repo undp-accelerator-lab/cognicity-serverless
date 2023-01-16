@@ -95,10 +95,6 @@ const handleGeoCapResponse = (data, req, res, cap, next) => {
     : // Otherwise hand off to geo formatter
       formatGeo(data, req.query.geoformat)
         .then((formatted) => {
-          console.log(
-            "🚀 ~ file: utils.js ~ line 86 ~ .then ~ formatted",
-            formatted
-          );
           return res.status(200).json({ statusCode: 200, result: formatted });
         })
         .catch((err) => {
