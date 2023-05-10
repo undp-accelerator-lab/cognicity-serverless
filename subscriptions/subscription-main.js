@@ -36,9 +36,12 @@ app.get("subscriptions", (req, res, next) => {
 });
 
 app.post("subscriptions/add-subscriber", (req, res, next) => {
+    if (!req?.body?.whatsapp) {
+        return res.status(400).json({ message: "Bad Request , whatsapp number is needed" });
+    }
     return subscriptions(config, db)
         .addNewSubscription(req.body)
-        .then(data => res.status(200).json({ 'data': 'Successfully added' }))
+        .then(data => res.status(200).json({ data: "Successfully added" }))
         .catch(err => {
             console.log("🚀 ~ file: subscription-main.js:37 ~ err", err);
             return res.status(500).json({ message: "Could not process request" });

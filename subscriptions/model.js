@@ -32,7 +32,6 @@ const subscriptions = (config, db, logger) => ({
   }),
 
   addNewSubscription : (body) => {
-  console.log("body coming to be" , body)
     return new Promise((resolve , reject) => {
       let query =  `
       INSERT INTO ${config.TABLE_SUBSCRIPTIONS} (facebook, twitter, instagram , whatsapp , telegram , area_id)
