@@ -34,7 +34,7 @@ const subscriptions = (config, db, logger) => ({
   addNewSubscription : (body) => {
     return new Promise((resolve , reject) => {
       let query =  `
-      INSERT INTO ${config.TABLE_SUBSCRIPTIONS} (facebook, twitter, instagram , whatsapp , telegram , area_id)
+      INSERT INTO ${config.TABLE_SUBSCRIPTIONS} (facebook, twitter, instagram , whatsapp , telegram , region_code)
       VALUES (COALESCE(?,null) , COALESCE(?,null) , COALESCE(?,null) , COALESCE(?,null) , COALESCE(?,null) , ? );
     `;
       // Execute
