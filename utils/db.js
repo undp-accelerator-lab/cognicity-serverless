@@ -13,11 +13,11 @@ const db = new Sequelize(database, user, password, {
   port: port,
 
   // Comment out this snippet incase of running it on local
-  // dialectOptions: {
-  //   ssl: {
-  //     require: config.PGSSL,
-  //     rejectUnauthorized: false,
-  //   },
-  // },
+  dialectOptions: {
+    ssl: {
+      require: config.PGSSL,
+      rejectUnauthorized: false,
+    },
+  },
 });
 module.exports = db;
